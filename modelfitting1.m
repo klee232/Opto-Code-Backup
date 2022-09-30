@@ -2,7 +2,7 @@
 % Construct Models for Fitting
 % Scenario 1: x0 only for random effect
 
-function [phi_cell mse model]=modelfitting1(pred,resp,celltype)
+function [phi_cell mse model]=modelfitting1(pred,resp,mean_current_cell_bla,celltype)
  % Model Fitting 
  % Setting Up Fixed-effect Coefficients
  % Preprocessing the Data
@@ -27,7 +27,7 @@ function [phi_cell mse model]=modelfitting1(pred,resp,celltype)
      num_curr_unique_pred = size(curr_unique_pred_ind,1);
      % If there's more than one, average through all the
      % corresponding data and store it into the storage variable
-     if num_curr_unique_pred_hep > 1
+     if num_curr_unique_pred > 1
         avg_curr_unique_resp = mean(resp(curr_unique_pred_ind));
         filt_unique_resp = cat(1,filt_unique_resp, avg_curr_unique_resp);
      % If the corresponding concentration only have one
@@ -37,8 +37,6 @@ function [phi_cell mse model]=modelfitting1(pred,resp,celltype)
      end
  end
  
- % Looping through each of the elements to check the longest
- % decreasing interval
  % Concatenate Predictor and Response Array Together to Form
  % Corresponding Predictor-Response Pairs Data
  filt_data = cat(2, filt_unique_pred, filt_unique_resp);
@@ -59,7 +57,8 @@ function [phi_cell mse model]=modelfitting1(pred,resp,celltype)
  % pointing purpose at the data matrix)
  Start_ind = 0;
  End_ind = 0;
- % Loop through the data
+ % Looping through each of the elements to check the longest
+ % decreasing interval
  for i_col_filt_data = 1:n_col_filt_data
      % Check if the interval is descending
      % If this is the first looping, save the corresponding
@@ -94,7 +93,7 @@ function [phi_cell mse model]=modelfitting1(pred,resp,celltype)
               if i_col_filt_data == n_col_filt_data
                  guess_x0 = max_end_point;
               else
-                  guess_x0 = (max_start_point+max_end_point)/2;
+                 guess_x0 = (max_start_point+max_end_point)/2;
               end
            end
            Start_point = sorted_filt_data(i_col_filt_data,1);
