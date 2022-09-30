@@ -368,7 +368,7 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                          % Calculate the Mean and CI_95 for Current
                          % Concentration Data
                          mean_current_cell_did_currconc_divided = mean(data_current_cell_did_currconc_lumin_divided);
-                         ci_95_current_cell_did_currconc_divided = SEtoCI(std(data_current_did_currconc_lumin_divided), numel(data_current_did_currconc_lumin_divided), true);
+                         ci_95_current_cell_did_currconc_divided = SEtoCI(std(data_current_cell_did_currconc_lumin_divided), numel(data_current_cell_did_currconc_lumin_divided), true);
                          % normalize mean and ci
                          mean_current_cell_did_currconc_divided = mean_current_cell_did_currconc_divided/mean_current_cell_did_zero_divided_temp;
                          ci_95_current_cell_did_currconc_divided = ci_95_current_cell_did_currconc_divided/mean_current_cell_did_zero_divided_temp;
@@ -443,7 +443,17 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                 data_current_cell_zero_lumin = data_current_cell_zero.lumin;
                 mean_current_cell_zero = mean(data_current_cell_zero_lumin);
                 % Grab Out All Blank Data
-                data_current_cell_bla = data_current_cell(data_current.cell=="blank",:);
+                % Create an Indicator for Filrering Out Blank Data
+                if strcmp(celltype,"HepG2")
+                    indicator = "HEP";
+                elseif strcmp(celltype, "neuro")
+                    indicator = "NEU";
+                else
+                    message = "%s is not found";
+                    error(message,celltype);
+                end
+                data_current_cell_bla = data_current(strcmp(data_current.cell,"blank") &...
+                                                     contains(data_current.did,indicator),:);
                 data_current_cell_bla_lumin = data_current_cell_bla.lumin;
 
                 % Calculation Portion
@@ -511,7 +521,7 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                     hold on
 
                     % Model Fitting 
-                    [phi_cell_divided mse_divided model_divided] = modelfitting1(pre_divided, resp_divided, mean_current_cell_bla_divided, celltype);
+                    [phi_cell_divided mse_divided model_divided] = modelfitting1(pred_divided, resp_divided, mean_current_cell_bla_divided, celltype);
                     % Plotting Outcomes
                     min_pre = min(pred_divided);
                     max_pre = max(pred_divided);
@@ -529,7 +539,7 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                     data_current_cell_zero_area = data_current_cell_zero.area;
                     data_current_cell_zero_vol = data_current_cell_zero_area./pi;
                     data_current_cell_zero_vol = sqrt(data_current_cell_zero_vol);
-                    data_current_cell_zero_vol = pow(data_current_cell_zero_vol,3);
+                    data_current_cell_zero_vol = power(data_current_cell_zero_vol,3);
                     data_current_cell_zero_vol = (4/3*pi).*data_current_cell_zero_vol;
                     data_current_cell_zero_divided_vol = data_current_cell_zero_lumin./data_current_cell_zero_vol;
                     % After that, we calculate its mean
@@ -541,7 +551,7 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                     % Calculate the Corresponding Volume
                     data_current_cell_vol = data_current_cell_area./pi;
                     data_current_cell_vol = sqrt(data_current_cell_vol);
-                    data_current_cell_vol = pow(data_current_cell_vol,3);
+                    data_current_cell_vol = power(data_current_cell_vol,3);
                     data_current_cell_vol = (4/3*pi).* data_current_cell_vol;
                     mean_vol_current_cell = mean(nonzeros(data_current_cell_vol));
                     % After doing so, we then divided the blank data with the
@@ -563,7 +573,7 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                     hold on
 
                     % Model Fitting 
-                    [phi_cell_divided_vol mse_divided_vol model_divided_vol] = modelfitting1(pre_divided_vol, resp_divided_vol, mean_current_cell_bla_divided_vol, celltype);
+                    [phi_cell_divided_vol mse_divided_vol model_divided_vol] = modelfitting1(pred_divided_vol, resp_divided_vol, mean_current_cell_bla_divided_vol, celltype);
                     % Plotting Outcomes
                     min_pre = min(pred_divided);
                     max_pre = max(pred_divided);

@@ -64,7 +64,7 @@ function [phi_cell mse model]=modelfitting1(pred,resp,mean_current_cell_bla,cell
      % If this is the first looping, save the corresponding
      % predictor value and index and skip the investigation
      if i_col_filt_data == 1
-        Start_point = sorted_filt_data_hep(i_col_filt_data,1);
+        Start_point = sorted_filt_data(i_col_filt_data,1);
         Start_ind = i_col_filt_data;
      % If this is not the first looping, check if the interval is
      % descending
