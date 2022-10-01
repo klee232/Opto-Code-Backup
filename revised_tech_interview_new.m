@@ -1,6 +1,6 @@
 function revised_tech_interview_new(input_filename, input_celltypes)
     
-    path(path,'../../matlab-lib');
+    path(path,'../../matlab-lib/matlab-lib-master');
     
     %% Check Out All Input 
     if isempty(input_filename)
@@ -109,7 +109,7 @@ function revised_tech_interview_new(input_filename, input_celltypes)
                 data_current_cell_num_dids = numel(data_current_cell_ids); 
                 
                 % Plot Setup
-                pic_counter = (i_cell-1)*num_analy+i_method;
+                pic_counter = (i_drug-1)*n_cells*num_analy+(i_cell-1)*num_analy+i_method;
                 figure(pic_counter);
                 message = "Dose vs Concentration Plot for %s (%s)";
                 title(sprintf(message, celltype, research_method));
